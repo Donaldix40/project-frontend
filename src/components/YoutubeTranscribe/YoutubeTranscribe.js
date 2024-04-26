@@ -207,6 +207,7 @@ const YoutubeTranscribeGenerator = () => {
 
         const transcript = await fetchTranscript(topic);
         if (!transcript) {
+          setLoading(false);
           return;
         }
 
