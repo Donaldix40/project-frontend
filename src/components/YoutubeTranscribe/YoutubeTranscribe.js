@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { pdfjs } from "react-pdf";
-
+import logo from "../../assets/favicon.webp"
 import Modal from "react-modal";
 Modal.setAppElement("#root"); // This is important to avoid accessibility issues
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -104,7 +104,7 @@ const YoutubeTranscribeGenerator = () => {
   async function chatgpt(prompt, previousMessages) {
     try {
       
-      const response = await fetch("https://ataylor1972-pdfservicebackend-production.up.railway.app/chatgpt", {
+      const response = await fetch("https://project-backend-production-fd58.up.railway.app/chatgpt", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -163,7 +163,7 @@ const YoutubeTranscribeGenerator = () => {
     async function fetchTranscript(topic) {
       try {
         const response = await fetch(
-          "https://ataylor1972-pdfservicebackend-production.up.railway.app/youtube",
+          "https://project-backend-production-fd58.up.railway.app/youtube",
           {
             method: "POST",
             headers: {
@@ -232,7 +232,8 @@ const YoutubeTranscribeGenerator = () => {
 
     return (
       <div className="w-full lg:w-[40%] space-y-4">
-        <div>
+        <div className="flex flex-col items-center gap-4">
+          <img src={logo} className="w-40 h-40"></img>
           <h1 className="text-center text-2xl font-bold">
             {" "}
             Youtube Transcribe Generator
@@ -866,7 +867,7 @@ const YoutubeTranscribeGenerator = () => {
       .join("");
 
     const response = await fetch(
-      "https://ataylor1972-pdfservicebackend.onrender.com/generate-pdf",
+      "https://project-backend-production-fd58.up.railway.app/generate-pdf",
       {
         method: "POST",
         headers: {
