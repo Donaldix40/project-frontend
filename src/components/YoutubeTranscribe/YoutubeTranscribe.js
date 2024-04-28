@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { pdfjs } from "react-pdf";
-import logo from "../../assets/favicon.webp"
+import logo from "../../assets/favicon.webp";
 import Modal from "react-modal";
 Modal.setAppElement("#root"); // This is important to avoid accessibility issues
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -60,97 +60,29 @@ const YoutubeTranscribeGenerator = () => {
 
     const botResponse = { role: "system", content: botResponseText };
     setMessages((prevMessages) => [...prevMessages, botResponse]);
-
-    setIsQuestionsVisible(true);
   };
-
-  const [isQuestionsVisible, setIsQuestionsVisible] = useState(true);
-
-  const handleQuestionClick = (question, index) => {
-    setIsQuestionsVisible(false);
-    handleSend(question);
-  };
-
-  // async function questionChatgpt(prompt) {
-  //   const DEFAULT_PARAMS = {
-  //     model: "gpt-3.5-turbo-1106",
-  //     messages: [
-  //       {
-  //         role: "system",
-  //         content: "Act as a unit plan generator.",
-  //       },
-  //       { role: "user", content: prompt },
-  //     ],
-  //   };
-
-  //   const params = { ...DEFAULT_PARAMS };
-  //   const requestOptions = {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: "Bearer " + String(process.env.REACT_APP_OPEN_AI_KEY),
-  //     },
-  //     body: JSON.stringify(params),
-  //   };
-  //   const response = await fetch(
-  //     "https://api.openai.com/v1/chat/completions",
-  //     requestOptions
-  //   );
-  //   const data = await response.json();
-  //   const result = data.choices[0].message.content;
-  //   return result;
-  // }
 
   async function chatgpt(prompt, previousMessages) {
     try {
-      
-      const response = await fetch("https://project-backend-production-fd58.up.railway.app/chatgpt", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          prompt,
-          previousMessages
-        }),
-      });
+      const response = await fetch(
+        "https://project-backend-production-fd58.up.railway.app/chatgpt",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            prompt,
+            previousMessages,
+          }),
+        }
+      );
       const result = await response.json();
       return result.message;
     } catch (e) {
       return e;
     }
   }
-
-  // async function chatgpt(prompt, previousMessages) {
-  //   const DEFAULT_PARAMS = {
-  //     model: "gpt-3.5-turbo-1106",
-  //     messages: [
-  //       {
-  //         role: "system",
-  //         content: `Act as ChatGPT API Assistant.`,
-  //       },
-  //       ...previousMessages, // Spread previous messages here
-  //       { role: "user", content: prompt },
-  //     ],
-  //   };
-
-  //   const params = { ...DEFAULT_PARAMS };
-  //   const requestOptions = {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: "Bearer " + String(process.env.REACT_APP_OPEN_AI_KEY),
-  //     },
-  //     body: JSON.stringify(params),
-  //   };
-  //   const response = await fetch(
-  //     "https://api.openai.com/v1/chat/completions",
-  //     requestOptions
-  //   );
-  //   const data = await response.json();
-  //   const result = data.choices[0].message.content;
-  //   return result;
-  // }
 
   const GenerateTranscribe = () => {
     const [loading, setLoading] = useState(false);
@@ -283,500 +215,6 @@ const YoutubeTranscribeGenerator = () => {
     );
   };
 
-  const Button = ({ children, onClick }) => (
-    <button
-      className="group flex h-full items-center border border-gray-400 hover:bg-gray-300 rounded-md px-1 py-2 w-full text-sm font-medium"
-      onClick={onClick}
-    >
-      <span className="text-left text-gray-600 text-xs font-semibold ml-2">
-        {children}
-      </span>
-      <span className="ml-auto mr-1">
-        <div className="rounded-md py-1 px-2 bg-gray-400 transform opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <i class="fa-solid fa-paper-plane h-4 w-4 text-gray-600 cursor-pointer hover:text-gray-800"></i>
-        </div>
-      </span>
-    </button>
-  );
-
-  // const ActionMenu = () => {
-  //   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  //   const [isTranslateMenuOpen, setIsTranslateMenuOpen] = useState(false);
-  //   const [isQuestionMenuOpen, setIsQuestionMenuOpen] = useState(false);
-  //   const [isLengthMenuOpen, setIsLengthMenuOpen] = useState(false);
-  //   const [isSummarizeMenuOpen, setIsSummarizeMenuOpen] = useState(false);
-  //   const [isCustomMenuOpen, setIsCustomMenuOpen] = useState(false);
-  //   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  //   const [customPrompts, setCustomPrompts] = useState(() => {
-  //     const savedPrompts = localStorage.getItem("customPrompts");
-  //     return savedPrompts
-  //       ? JSON.parse(savedPrompts)
-  //       : [
-  //           {
-  //             title: "Differentiate",
-  //             description:
-  //               "For the output above, give me suggestions to differentiate it for …",
-  //           },
-  //           {
-  //             title: "Rewrite",
-  //             description: "Rewrite the output above so that …",
-  //           },
-  //         ];
-  //   });
-
-  //   useEffect(() => {
-  //     // Save prompts to local storage whenever they change
-  //     localStorage.setItem("customPrompts", JSON.stringify(customPrompts));
-  //   }, [customPrompts]);
-
-  //   const deletePrompt = (indexToDelete) => {
-  //     const updatedPrompts = customPrompts.filter(
-  //       (_, index) => index !== indexToDelete
-  //     );
-  //     setCustomPrompts(updatedPrompts);
-  //   };
-
-  //   const menuRef = useRef(); // Reference to the main menu
-
-  //   const toggleModal = () => setIsModalOpen(!isModalOpen);
-
-  //   const saveCustomPrompt = (title, description) => {
-  //     const newPrompt = { title, description };
-  //     setCustomPrompts([...customPrompts, newPrompt]);
-  //     toggleModal();
-  //   };
-
-  //   const toggleMenu = () => {
-  //     setIsMenuOpen(!isMenuOpen);
-  //     if (!isMenuOpen) {
-  //       setIsTranslateMenuOpen(false);
-  //       setIsQuestionMenuOpen(false);
-  //       setIsCustomMenuOpen(false);
-  //       setIsLengthMenuOpen(false);
-  //       setIsSummarizeMenuOpen(false);
-  //     }
-  //   };
-
-  //   useEffect(() => {
-  //     function handleClickOutside(event) {
-  //       if (menuRef.current && !menuRef.current.contains(event.target)) {
-  //         setIsMenuOpen(false);
-  //         setIsTranslateMenuOpen(false);
-  //         setIsQuestionMenuOpen(false);
-  //         setIsCustomMenuOpen(false);
-  //       }
-  //     }
-
-  //     document.addEventListener("mousedown", handleClickOutside);
-  //     return () => {
-  //       document.removeEventListener("mousedown", handleClickOutside);
-  //     };
-  //   }, [menuRef]);
-
-  //   const [selectValue, setSelectValue] = useState("English");
-  //   const handleSelectChange = (e) => {
-  //     setSelectValue(e.target.value);
-  //   };
-
-  //   return (
-  //     <div className="mt-2 relative inline-block text-left" ref={menuRef}>
-  //       <button
-  //         onClick={toggleMenu}
-  //         className="inline-flex justify-center w-full px-4 py-2.5 text-sm text-white bg-indigo-600 rounded-md shadow-sm focus:outline-none focus:none"
-  //         id="menu-button"
-  //         aria-expanded="true"
-  //         aria-haspopup="true"
-  //       >
-  //         <div className="flex gap-2 items-center">
-  //           <i className="fa-solid fa-circle-plus"></i>
-  //           <span>Actions</span>
-  //         </div>
-  //       </button>
-
-  //       {isMenuOpen && (
-  //         <div
-  //           className="absolute bottom-16 left-0 mt-2 w-auto sm:w-56 border border-gray-200 rounded-md shadow-lg bg-white focus:outline-none outline-none"
-  //           role="menu"
-  //           aria-orientation="vertical"
-  //           aria-labelledby="menu-button"
-  //           tabIndex="-1"
-  //         >
-  //           <div className="py-1" role="none">
-  //             <a
-  //               href="#"
-  //               className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 relative"
-  //               role="menuitem"
-  //               tabIndex="-1"
-  //               onClick={(e) => {
-  //                 e.preventDefault();
-  //                 setIsTranslateMenuOpen(!isTranslateMenuOpen);
-  //                 setIsQuestionMenuOpen(false);
-  //                 setIsLengthMenuOpen(false);
-  //                 setIsSummarizeMenuOpen(false);
-  //                 setIsCustomMenuOpen(false);
-  //               }}
-  //             >
-  //               Translate
-  //               {isTranslateMenuOpen && (
-  //                 <div
-  //                   className="absolute left-full bottom-0 mt-0 ml-2 w-40 sm:w-56 border border-gray-200 rounded-md shadow-lg bg-white py-2 px-2"
-  //                   role="menu"
-  //                   aria-orientation="vertical"
-  //                 >
-  //                   <div
-  //                     className="flex gap-2"
-  //                     onClick={(e) => {
-  //                       e.preventDefault();
-  //                       e.stopPropagation();
-  //                     }}
-  //                   >
-  //                     <select
-  //                       value={selectValue}
-  //                       onChange={handleSelectChange}
-  //                       className="block w-full pl-1 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm "
-  //                     >
-  //                       <option>English</option>
-  //                       <option>French</option>
-  //                       <option>German</option>
-  //                       <option>Italian</option>
-  //                     </select>
-  //                     <button
-  //                       className="rounded-md px-2 bg-gray-300"
-  //                       onClick={() => {
-  //                         setIsQuestionsVisible(false); // Hide the question container
-  //                         handleSend(
-  //                           `Translate the above content into ${selectValue}`
-  //                         );
-  //                       }}
-  //                     >
-  //                       <i class="fa-solid fa-paper-plane text-lg h-5 w-5 text-gray-600 cursor-pointer hover:text-gray-800"></i>
-  //                     </button>
-  //                   </div>
-  //                 </div>
-  //               )}
-  //             </a>
-
-  //             <a
-  //               href="#"
-  //               className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 relative"
-  //               role="menuitem"
-  //               tabIndex="-1"
-  //               onClick={(e) => {
-  //                 e.preventDefault();
-  //                 setIsQuestionMenuOpen(!isQuestionMenuOpen);
-  //                 setIsTranslateMenuOpen(false);
-  //                 setIsLengthMenuOpen(false);
-  //                 setIsSummarizeMenuOpen(false);
-  //                 setIsCustomMenuOpen(false);
-  //               }}
-  //             >
-  //               Questions
-  //               {isQuestionMenuOpen && (
-  //                 <div
-  //                   className="absolute left-full bottom-0 mt-0 ml-2 w-40 sm:w-56 border border-gray-200 rounded-md shadow-lg bg-white"
-  //                   role="menu"
-  //                   aria-orientation="vertical"
-  //                 >
-  //                   <a
-  //                     href="#"
-  //                     className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100"
-  //                     role="menuitem"
-  //                     onClick={() => {
-  //                       setIsQuestionsVisible(false); // Hide the question container
-  //                       handleSend(
-  //                         `Generate 5 questions for the above content. Make sure they are multiple choice questions.`
-  //                       );
-  //                     }}
-  //                   >
-  //                     Multiple Choice
-  //                   </a>
-  //                   <a
-  //                     href="#"
-  //                     className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100"
-  //                     role="menuitem"
-  //                     onClick={() => {
-  //                       setIsQuestionsVisible(false); // Hide the question container
-  //                       handleSend(
-  //                         `Generate 5 questions for the above content. Make sure they are free response questions.`
-  //                       );
-  //                     }}
-  //                   >
-  //                     Free Response
-  //                   </a>
-  //                 </div>
-  //               )}
-  //             </a>
-
-  //             <a
-  //               href="#"
-  //               className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 relative"
-  //               role="menuitem"
-  //               tabIndex="-1"
-  //               onClick={(e) => {
-  //                 e.preventDefault();
-  //                 setIsLengthMenuOpen(!isLengthMenuOpen);
-  //                 setIsTranslateMenuOpen(false);
-  //                 setIsQuestionMenuOpen(false);
-  //                 setIsSummarizeMenuOpen(false);
-  //                 setIsCustomMenuOpen(false);
-  //               }}
-  //             >
-  //               Length
-  //               {isLengthMenuOpen && (
-  //                 <div
-  //                   className="absolute left-full bottom-0 mt-0 ml-2 w-40 sm:w-56 border border-gray-200 rounded-md shadow-lg bg-white"
-  //                   role="menu"
-  //                   aria-orientation="vertical"
-  //                 >
-  //                   <a
-  //                     href="#"
-  //                     className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100"
-  //                     role="menuitem"
-  //                     onClick={() => {
-  //                       setIsQuestionsVisible(false); // Hide the question container
-  //                       handleSend(
-  //                         `Rewrite this to be 50% shorter while maintaining the tone and meaning.`
-  //                       );
-  //                     }}
-  //                   >
-  //                     Shorter
-  //                   </a>
-  //                   <a
-  //                     href="#"
-  //                     className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100"
-  //                     role="menuitem"
-  //                     onClick={() => {
-  //                       setIsQuestionsVisible(false); // Hide the question container
-  //                       handleSend(
-  //                         `Rewrite this to be up to twice as long while maintaining the tone and meaning in order to make it easier to understand.`
-  //                       );
-  //                     }}
-  //                   >
-  //                     Longer
-  //                   </a>
-  //                 </div>
-  //               )}
-  //             </a>
-
-  //             <a
-  //               href="#"
-  //               className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 relative"
-  //               role="menuitem"
-  //               tabIndex="-1"
-  //               onClick={(e) => {
-  //                 e.preventDefault();
-  //                 setIsSummarizeMenuOpen(!isSummarizeMenuOpen);
-  //                 setIsTranslateMenuOpen(false);
-  //                 setIsQuestionMenuOpen(false);
-  //                 setIsLengthMenuOpen(false);
-  //                 setIsCustomMenuOpen(false);
-  //               }}
-  //             >
-  //               Summarize
-  //               {isSummarizeMenuOpen && (
-  //                 <div
-  //                   className="absolute left-full bottom-0 mt-0 ml-2 w-40 sm:w-56 border border-gray-200 rounded-md shadow-lg bg-white"
-  //                   role="menu"
-  //                   aria-orientation="vertical"
-  //                 >
-  //                   <a
-  //                     href="#"
-  //                     className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100"
-  //                     role="menuitem"
-  //                     onClick={() => {
-  //                       setIsQuestionsVisible(false); // Hide the question container
-  //                       handleSend(`Summarize this in exactly one sentence.`);
-  //                     }}
-  //                   >
-  //                     Sentence
-  //                   </a>
-  //                   <a
-  //                     href="#"
-  //                     className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100"
-  //                     role="menuitem"
-  //                     onClick={() => {
-  //                       setIsQuestionsVisible(false); // Hide the question container
-  //                       handleSend(`Summarize this in exactly one paragraph.`);
-  //                     }}
-  //                   >
-  //                     Paragraph
-  //                   </a>
-  //                   <a
-  //                     href="#"
-  //                     className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100"
-  //                     role="menuitem"
-  //                     onClick={() => {
-  //                       setIsQuestionsVisible(false); // Hide the question container
-  //                       handleSend(`Summarize this in bullet point format.`);
-  //                     }}
-  //                   >
-  //                     Bullet Points
-  //                   </a>
-  //                 </div>
-  //               )}
-  //             </a>
-
-  //             <a
-  //               href="#"
-  //               className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 relative"
-  //               role="menuitem"
-  //               tabIndex="-1"
-  //               onClick={(e) => {
-  //                 e.preventDefault();
-  //                 setIsCustomMenuOpen(!isCustomMenuOpen);
-  //                 setIsTranslateMenuOpen(false);
-  //                 setIsQuestionMenuOpen(false);
-  //                 setIsLengthMenuOpen(false);
-  //                 setIsSummarizeMenuOpen(false);
-  //               }}
-  //             >
-  //               Custom
-  //               {isCustomMenuOpen && (
-  //                 <div
-  //                   className="absolute left-full bottom-0 mt-0 ml-2 w-40 sm:w-56 border border-gray-200 rounded-md shadow-lg bg-white"
-  //                   role="menu"
-  //                   aria-orientation="vertical"
-  //                   aria-labelledby="menu-button"
-  //                   onClick={(e) => {
-  //                     e.preventDefault();
-  //                     setIsMenuOpen(!isMenuOpen);
-  //                   }}
-  //                 >
-  //                   <div className="py-1" role="none">
-  //                     <span className="text-xs  text-indigo-600 px-2">
-  //                       Custom Prompts
-  //                     </span>
-  //                     {customPrompts.map((prompt, index) => (
-  //                       <div
-  //                         key={index}
-  //                         className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-  //                         onClick={() => setInputValue(prompt.description)}
-  //                       >
-  //                         {prompt.title}
-  //                         <button
-  //                           onClick={(e) => {
-  //                             e.stopPropagation();
-  //                             deletePrompt(index);
-  //                           }}
-  //                           className="text-gray-500 hover:text-gray-800"
-  //                         >
-  //                           <i className="fas fa-trash" aria-hidden="true"></i>
-  //                         </button>
-  //                       </div>
-  //                     ))}
-  //                     <div className="py-1">
-  //                       <button
-  //                         className="group w-full flex items-center justify-center px-4 py-2 text-sm text-indigo-600 hover:bg-gray-100"
-  //                         role="menuitem"
-  //                         onClick={(e) => {
-  //                           e.preventDefault();
-  //                           toggleModal();
-  //                         }}
-  //                       >
-  //                         <span>+ Add Custom Prompt</span>
-  //                       </button>
-  //                     </div>
-  //                   </div>
-  //                 </div>
-  //               )}
-  //             </a>
-  //           </div>
-  //         </div>
-  //       )}
-
-  //       <Modal
-  //         isOpen={isModalOpen}
-  //         onRequestClose={toggleModal}
-  //         contentLabel="Add Custom Prompt"
-  //         className="m-4 border border-gray-300 shadow-lg w-full max-w-md p-5 absolute top-1/4 left-1/2 transform -translate-x-1/2 bg-white rounded-md"
-  //       >
-  //         <h2 className="text-lg font-semibold mb-4">Add Custom Prompt</h2>
-  //         <form
-  //           onSubmit={(e) => {
-  //             e.preventDefault();
-  //             saveCustomPrompt(
-  //               e.target.title.value,
-  //               e.target.description.value
-  //             );
-  //           }}
-  //         >
-  //           <div className="mb-4">
-  //             <label
-  //               htmlFor="title"
-  //               className="block text-sm font-medium text-gray-700"
-  //             >
-  //               Prompt Title
-  //             </label>
-  //             <input
-  //               type="text"
-  //               name="title"
-  //               id="title"
-  //               required
-  //               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 outline-none focus:outline-none"
-  //             />
-  //           </div>
-  //           <div className="mb-6">
-  //             <label
-  //               htmlFor="description"
-  //               className="block text-sm font-medium text-gray-700"
-  //             >
-  //               Prompt Description
-  //             </label>
-  //             <textarea
-  //               name="description"
-  //               id="description"
-  //               rows="3"
-  //               required
-  //               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 outline-none focus:outline-none"
-  //             />
-  //           </div>
-  //           <div className="flex justify-end">
-  //             <button
-  //               type="button"
-  //               className="inline-flex mr-3 justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
-  //               onClick={toggleModal}
-  //             >
-  //               Cancel
-  //             </button>
-  //             <button
-  //               type="submit"
-  //               className="inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
-  //             >
-  //               Save
-  //             </button>
-  //           </div>
-  //         </form>
-  //       </Modal>
-  //     </div>
-  //   );
-  // };
-
-  // const [questions, setQuestions] = useState({});
-  // const fetchQuestionsForMessage = async (content, index) => {
-  //   const prompt = `Based on the following content, generate two short questions (5 to 10 words each) without numbering them:\n\n"${content}"`;
-
-  //   const response = await questionChatgpt(prompt);
-
-  //   const questions = response
-  //     .split("\n")
-  //     .filter((line) => line.trim() !== "")
-  //     .slice(0, 2);
-
-  //   // Update the state with the new questions
-  //   setQuestions(() => ({
-  //     [index]: questions,
-  //   }));
-  // };
-
-  // useEffect(() => {
-  //   messages.forEach((message, index) => {
-  //     if (message.role === "system") {
-  //       fetchQuestionsForMessage(message.content, index);
-  //     }
-  //   });
-  // }, [messages]);
-
   const generateAndDownloadWord = () => {
     const header =
       "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
@@ -785,7 +223,6 @@ const YoutubeTranscribeGenerator = () => {
       "<head><meta charset='utf-8'><title>Export HTML to Word Document with JavaScript</title></head><body>";
     const footer = "</body></html>";
 
-    // Combine all message contents into one HTML string with line breaks between them
     const combinedMessages = messages
       .map((message) => message.content + "<br/><br/>")
       .join("");
@@ -797,13 +234,13 @@ const YoutubeTranscribeGenerator = () => {
     const fileDownload = document.createElement("a");
     document.body.appendChild(fileDownload);
     fileDownload.href = source;
-    fileDownload.download = "document.doc"; // Or "document.docx" for more recent versions of Word
+    fileDownload.download = "document.doc";
     fileDownload.click();
     document.body.removeChild(fileDownload);
   };
 
   const [uploading, setUploading] = useState(false);
-  const [fileName, setFileName] = useState(""); // State to store the uploaded file name
+  const [fileName, setFileName] = useState("");
   const [uploaded, setUploaded] = useState(false);
 
   const onFileChange = async (e) => {
@@ -812,21 +249,17 @@ const YoutubeTranscribeGenerator = () => {
     if (file && file.type === "application/pdf" && file.size <= 5000000) {
       setUploading(true);
       setUploaded(false);
-      setFileName(file.name); // Set the file name for displaying
+      setFileName(file.name);
 
-      // Initialize FileReader
       const reader = new FileReader();
       reader.onload = async (e) => {
         const typedArray = new Uint8Array(e.target.result);
         try {
-          // Assuming pdfjs is correctly imported and used
           const pdfDoc = await pdfjs.getDocument(typedArray).promise;
           console.log(`PDF loaded: ${pdfDoc.numPages} pages`);
 
-          // Initialize an array to hold the text of each page
           let allText = [];
 
-          // Loop through each page of the PDF
           for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
             const page = await pdfDoc.getPage(pageNum);
             const textContent = await page.getTextContent();
@@ -836,16 +269,14 @@ const YoutubeTranscribeGenerator = () => {
             allText.push(pageText);
           }
 
-          // Combine the text from all pages into a single string
-          const fullText = allText.join("\n"); // You can change '\n' to ' ' or any separator you prefer
+          const fullText = allText.join("\n");
 
-          // Update the state with the full text
           setPdfContent(fullText);
           setUploaded(true);
         } catch (error) {
           console.error("Error reading PDF: ", error);
         } finally {
-          setUploading(false); // Ensure we always turn off the uploading indicator
+          setUploading(false);
         }
       };
       reader.readAsArrayBuffer(file);
@@ -856,9 +287,8 @@ const YoutubeTranscribeGenerator = () => {
   };
 
   const removePDF = () => {
-    setUploaded(false); // Remove the uploaded state
-    setFileName(""); // Clear the file name
-    // Additional logic to handle the removal from messageArray or backend if needed
+    setUploaded(false);
+    setFileName("");
     document.getElementById("pdf-upload").value = null;
   };
 
@@ -986,22 +416,6 @@ const YoutubeTranscribeGenerator = () => {
                           </div>
                         )}
                       </div>
-
-                      {/* {isQuestionsVisible &&
-                        message.role === "system" &&
-                        questions[index] && (
-                          <div className="flex flex-wrap mb-2">
-                            {questions[index].map((question, qIndex) => (
-                              <div key={qIndex} className="w-full sm:w-1/2 p-1">
-                                <Button
-                                  onClick={() => handleQuestionClick(question)}
-                                >
-                                  {question}
-                                </Button>
-                              </div>
-                            ))}
-                          </div>
-                        )} */}
                     </React.Fragment>
                   ))}
 
@@ -1016,7 +430,6 @@ const YoutubeTranscribeGenerator = () => {
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-2">
-                  {/* <ActionMenu /> */}
                   <div className="w-full flex items-center mt-2 mb-2 min-h-[40px] bg-white rounded-lg border border-gray-300 shadow-sm relative">
                     <div className="pl-2">
                       <label htmlFor="pdf-upload">
