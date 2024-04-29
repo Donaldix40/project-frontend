@@ -84,9 +84,30 @@ const YoutubeTranscribeGenerator = () => {
     }
   }
 
+  const Modal = ({ isOpen, onClose }) => {
+    if (!isOpen) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-filter backdrop-blur-sm flex justify-center items-center p-4 z-10">
+        <div className="bg-white rounded-lg shadow-xl p-6">
+          <p className="text-base">
+            Only the first 1500 words will be transcribed.
+          </p>
+          <button
+            onClick={onClose}
+            className="mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded float-right"
+          >
+            Ok
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   const GenerateTranscribe = () => {
     const [loading, setLoading] = useState(false);
     const [topic, setTopic] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [errors, setErrors] = useState({
       topic: false,
@@ -110,7 +131,16 @@ const YoutubeTranscribeGenerator = () => {
         }
 
         const result = await response.json();
-        return result.transcript;
+        // return result.transcript;
+
+        const words = result.transcript.split(/\s+/);
+        if (words.length > 1500) {
+          const slicedTranscript = words.slice(0, 1500).join(" ") + "...";
+          setIsModalOpen(true); // Open the modal
+          return slicedTranscript;
+        } else {
+          return result.transcript;
+        }
       } catch (error) {
         console.error("Error fetching transcript:", error);
       }
@@ -211,6 +241,8 @@ const YoutubeTranscribeGenerator = () => {
             )}
           </button>
         </div>
+
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       </div>
     );
   };
